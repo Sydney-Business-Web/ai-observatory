@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use or reference AI Observatory, please cite this repository."
+title: "AI Observatory — Verified AI and Search Crawler Retrieval Monitoring"
+
+authors:
+  - family-names: "Rowley"
+    given-names: "Keith"
+    affiliation: "Sydney Business Web"
+
+abstract: >
+  AI Observatory is a server-side retrieval monitoring framework developed
+  by Sydney Business Web. It provides observable evidence of recognised AI
+  and search crawler activity, including which website resources are requested,
+  whether retrievals succeed, and how machine access changes over time. It is
+  designed to distinguish verified retrieval behaviour from ordinary traffic
+  analytics and simple bot counting.
+
+repository-code: "https://github.com/Sydney-Business-Web/ai-observatory"
+url: "https://sydneybusinessweb.com.au/ai-observatory-verified-ai-retrieval-monitoring/"
+
+keywords:
+  - "AI Observatory"
+  - "AI crawler monitoring"
+  - "AI retrieval"
+  - "crawler telemetry"
+  - "server-side monitoring"
+  - "AI visibility"
+  - "OAI-SearchBot"
+  - "GPTBot"
+  - "PerplexityBot"
+  - "ClaudeBot"
