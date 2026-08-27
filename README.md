@@ -8,6 +8,12 @@ It is designed to answer a specific question:
 
 AI Observatory is not simply a bot counter or conventional server-log viewer. It uses edge telemetry, retrieval classification and qualification rules to produce defensible evidence of machine access to web resources.
 
+## DOI
+
+AI Observatory v1.0.0 is archived on Zenodo:
+
+**DOI:** [10.5281/zenodo.22040578](https://doi.org/10.5281/zenodo.22040578)
+
 ## Developed By
 
 **Sydney Business Web**  
@@ -121,6 +127,14 @@ This repository should therefore not be interpreted as an open-source distributi
 
 AI Observatory is a proprietary system developed by Sydney Business Web.
 
-Documentation in this repository is provided for technical reference and transparency. No licence to reproduce the proprietary implementation, algorithms or commercial system is granted unless explicitly stated.
+The documentation in this repository is publicly available for technical reference and citation only.
+
+Copyright © 2026 Sydney Business Web. All rights reserved.
+
+No licence is granted to reproduce, modify, distribute, commercially exploit, or create derivative works from the documentation in this repository without prior written permission from Sydney Business Web, except where permitted by law.
+
+The production implementation, proprietary source code, filtering logic, qualification algorithms, internal thresholds, authentication mechanisms and commercial implementation remain proprietary to Sydney Business Web and are not included in this repository.
+
+This repository should not be interpreted as an open-source distribution of AI Observatory.
 
 © Sydney Business Web. All rights reserved.
