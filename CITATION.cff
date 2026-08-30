@@ -3,6 +3,7 @@ message: "If you use or reference AI Observatory, please cite this repository."
 title: "AI Observatory — Verified AI and Search Crawler Retrieval Monitoring"
 version: "1.0.0"
 doi: "10.5281/zenodo.22040578"
+date-released: 2026-08-21
 
 authors:
   - family-names: "Rowley"
