@@ -6,13 +6,33 @@ It is designed to answer a specific question:
 
 > **Are AI and search systems actually retrieving the website, and what are they retrieving?**
 
-AI Observatory is not simply a bot counter or conventional server-log viewer. It uses edge telemetry, retrieval classification and qualification rules to produce defensible evidence of machine access to web resources.
+AI Observatory is not simply a bot counter or conventional server-log viewer. It uses qualified telemetry, site attribution, crawler corroboration, current-resource qualification and retrieval-outcome rules to produce defensible evidence of machine access to web resources.
+
+## Current Documentation Version
+
+**Technical documentation:** v1.1.0  
+**Measurement Contract:** 1.4  
+**Finalised:** 20 September 2026
+
+Version 1.1.0 formalises:
+
+- site attribution before site-specific scoring;
+- corroborated crawler identity rather than User-Agent counting alone;
+- separation of autonomous crawling from owner-triggered diagnostics and user-requested retrieval;
+- explicit current business-resource registries;
+- separate machine-discovery measurement;
+- 2xx success, 4xx/5xx failure and neutral 3xx redirect treatment;
+- adapter-independent measurement across different hosting and telemetry environments.
+
+The production source code and proprietary implementation remain private.
 
 ## DOI
 
 AI Observatory v1.0.0 is archived on Zenodo:
 
 **DOI:** [10.5281/zenodo.22040578](https://doi.org/10.5281/zenodo.22040578)
+
+A separate Zenodo archive for documentation v1.1.0 will be linked here when the new release record is published.
 
 ## Developed By
 
@@ -41,30 +61,52 @@ AI Observatory was developed to provide a more rigorous measurement layer for AI
 
 The system is designed to distinguish between:
 
-- recognised AI and search crawler activity;
+- recognised and sufficiently corroborated AI and search crawler activity;
+- autonomous and user-requested retrieval;
 - successful and unsuccessful retrievals;
-- business-content retrieval and discovery activity;
-- resource types being requested;
-- diagnostic or test traffic;
-- traffic that does not meet the system's qualification requirements.
+- current business-resource retrieval and machine-discovery activity;
+- diagnostic or controlled test traffic;
+- traffic and resource requests that do not meet the system's qualification requirements.
 
 The resulting measurements provide evidence of **retrieval**, rather than assumptions about crawler behaviour.
 
 ## Architecture
 
-The production implementation uses Cloudflare edge infrastructure to observe and classify relevant requests before reporting qualified retrieval evidence.
+AI Observatory uses a shared measurement core with environment-specific telemetry adapters.
 
-The architecture includes:
+The common measurement layer governs:
 
-1. **Edge telemetry collection** using Cloudflare Workers.
-2. **Crawler and request classification** at the edge.
-3. **Filtering and qualification rules** to reduce false-positive evidence.
-4. **Retrieval-state and resource-type classification.**
-5. **Telemetry storage** using Cloudflare Analytics Engine.
-6. **Independent reporting logic** for producing qualified retrieval measurements.
-7. **Rolling retrieval summaries** for recognised AI and search systems.
+1. **Observation** of production request and response evidence.
+2. **Site attribution** before site-specific scoring.
+3. **Crawler identity qualification** and corroboration.
+4. **Autonomous-activity qualification.**
+5. **Current business-resource qualification.**
+6. **Separate machine-discovery qualification.**
+7. **Retrieval-outcome scoring.**
+8. **Independent public reporting.**
 
-The telemetry and reporting layers are deliberately separated from the WordPress website being measured.
+Current production implementations demonstrate two telemetry patterns:
+
+- **Cloudflare edge telemetry**, with Analytics Engine and a reporting Worker.
+- **Apache/cPanel server-log telemetry**, with collector processing, D1 storage and a reporting Worker.
+
+The evidence source can differ while the public measurement contract remains the same.
+
+## Measurement Contract 1.4
+
+For qualifying GET requests to current approved resources:
+
+- **2xx** responses count as successful retrievals;
+- **4xx and 5xx** responses count as failed retrievals;
+- **3xx** responses are retained as evidence but are neutral and excluded from success-rate denominators.
+
+Business retrieval and machine discovery are scored separately.
+
+Business-retrieval scoring is restricted to an explicit registry of current approved business resources. Stale URLs, legacy paths, support assets, internal paths and otherwise unqualified resources do not enter the business-retrieval denominator.
+
+Machine-discovery scoring uses a separate explicit whitelist of approved machine-facing discovery resources.
+
+A redirect is not treated as a failed retrieval, and AI Observatory does not infer that a crawler followed a redirect unless a subsequent request is independently observed.
 
 ## Systems Observed
 
@@ -78,6 +120,8 @@ AI Observatory can identify relevant retrieval activity associated with recognis
 - Apple
 
 Recognition of a crawler does **not** imply endorsement, recommendation or inclusion of the website in an AI-generated answer.
+
+A newly encountered crawler is not automatically added to headline measurement simply because it presents a new User-Agent. Identity and corroboration rules are added deliberately before it can contribute to scored evidence.
 
 ## Measurement Boundary
 
@@ -97,7 +141,7 @@ It does **not** claim that retrieval proves:
 
 This distinction is fundamental to the system.
 
-Retrieval evidence establishes that a recognised system accessed a resource. Further AI Visibility analysis is required to determine whether a business is being understood, selected or cited by answer engines.
+Retrieval evidence establishes that a sufficiently corroborated system accessed a qualifying resource under the Observatory's measurement criteria. Further AI Visibility analysis is required to determine whether a business is being understood, selected or cited by answer engines.
 
 ## Relationship to AI Visibility Engineering
 
@@ -115,11 +159,21 @@ Together these address two different layers of AI Visibility:
 
 **retrieval → understanding**
 
+## Public Technical Documentation
+
+The repository contains:
+
+- [Technical architecture](docs/architecture.md)
+- [Retrieval methodology](docs/retrieval-methodology.md)
+- [Measurement boundary](docs/measurement-boundary.md)
+
+These documents describe the public architecture and measurement principles without distributing the production implementation.
+
 ## Repository Scope
 
 This repository provides public technical documentation relating to the architecture, terminology and measurement principles of AI Observatory.
 
-The production source code, filtering logic, qualification algorithms and commercial implementation remain proprietary to Sydney Business Web.
+The production source code, private thresholds, qualification algorithms, authentication mechanisms and commercial implementation remain proprietary to Sydney Business Web.
 
 This repository should therefore not be interpreted as an open-source distribution of AI Observatory.
 
