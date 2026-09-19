@@ -56,7 +56,9 @@ The initial public technical documentation release, v1.0.0, was published on 21 
 
 **10.5281/zenodo.22040578**
 
-The v1.1.0 Zenodo DOI will be added to the repository after the new archive record is published.
+The v1.1.0 documentation release is archived on Zenodo as DOI:
+
+**10.5281/zenodo.22850808**
 
 ---
 
