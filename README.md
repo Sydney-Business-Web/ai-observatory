@@ -28,11 +28,13 @@ The production source code and proprietary implementation remain private.
 
 ## DOI
 
-AI Observatory v1.0.0 is archived on Zenodo:
+AI Observatory documentation v1.1.0 is archived on Zenodo:
 
-**DOI:** [10.5281/zenodo.22040578](https://doi.org/10.5281/zenodo.22040578)
+**DOI:** [10.5281/zenodo.22850808](https://doi.org/10.5281/zenodo.22850808)
 
-A separate Zenodo archive for documentation v1.1.0 will be linked here when the new release record is published.
+Previous release:
+
+- v1.0.0 — [10.5281/zenodo.22040578](https://doi.org/10.5281/zenodo.22040578)
 
 ## Developed By
 
