@@ -2,9 +2,27 @@
 
 AI Observatory is a technical retrieval-monitoring system developed by [Sydney Business Web](https://sydneybusinessweb.com.au/).
 
-This document describes the methodology used to distinguish observable crawler activity from retrieval evidence suitable for AI Visibility analysis.
+This document describes the public methodology used to distinguish observable crawler activity from retrieval evidence suitable for AI Visibility analysis.
 
-Detailed production rules and proprietary qualification logic are intentionally excluded.
+Detailed production code, private thresholds and proprietary implementation logic are intentionally excluded.
+
+## Current Measurement Contract
+
+The current public measurement contract is **1.4**, finalised on 20 September 2026.
+
+Measurement Contract 1.4 formalises several principles that are important to defensible retrieval measurement:
+
+- site attribution is established before site-specific scoring;
+- recognised crawler identity must meet the public corroboration threshold;
+- autonomous activity is separated from owner-triggered diagnostics and user-requested retrieval;
+- business retrieval is scored only against an explicit registry of current approved business resources;
+- machine-discovery retrieval is measured separately against an explicit discovery-resource whitelist;
+- qualifying GET responses in the 2xx range count as successful retrievals;
+- qualifying GET responses in the 4xx or 5xx range count as failed retrievals;
+- 3xx responses are retained as evidence but treated as neutral and excluded from success-rate denominators;
+- stale, unknown, internal, support and otherwise unqualified resources fail closed and do not enter the business-retrieval score.
+
+The same measurement contract can be implemented through different telemetry adapters, provided that the evidence source can support the required attribution and qualification rules.
 
 ## Retrieval as an Observable Event
 
@@ -27,76 +45,111 @@ AI Observatory does not treat this alone as sufficient evidence.
 Raw request counts can be affected by:
 
 - diagnostic activity;
-- test requests;
+- controlled tests;
+- user-requested retrieval;
 - unsuccessful requests;
-- non-business resources;
-- repeated resource requests;
+- redirects;
+- stale or legacy URLs;
+- support assets and internal paths;
 - discovery activity;
 - traffic that claims a crawler identity but does not satisfy qualification requirements.
 
-For this reason, observation and qualification are separate stages.
+For this reason, observation, attribution, qualification and scoring are separate stages.
 
-## Retrieval Classification
+## Site Attribution
 
-Observed requests can be classified according to their role in the retrieval process.
+Before an event can contribute to a site-specific retrieval score, the Observatory must have a defensible basis for attributing the observation to the monitored site.
 
-Relevant classifications include:
+The precise evidence source can vary by implementation. For example, one deployment may observe requests directly at the website edge, while another may use server-log provenance from a hosting account or domain-specific log.
 
-### Business Retrieval
+The governing principle is:
 
-Retrieval of substantive public website resources containing information about the business, its services, expertise, products, evidence or other meaningful content.
+> **Site attribution precedes site scoring.**
 
-### Discovery Retrieval
+Exact requested-host resolution is useful where available, but it is not the only possible basis for attribution when the telemetry source itself provides sufficiently specific site provenance.
 
-Requests associated with discovering or navigating the site's available resources rather than retrieving substantive business content directly.
+## Crawler Identity and Corroboration
 
-### Resource-Type Retrieval
+Crawler recognition is not based on User-Agent text alone.
 
-Requests can also be distinguished according to the type of resource being accessed.
+A claimed crawler identity must satisfy the Observatory's public corroboration threshold before it can contribute to headline autonomous measurements.
 
-This prevents all network requests from being treated as equivalent evidence.
+The supporting evidence available varies by provider and telemetry environment. Publicly documented provider network information can form part of corroboration where appropriate.
 
-### Successful and Unsuccessful Retrieval
-
-A recognised crawler request does not automatically represent successful retrieval.
-
-Response outcome is therefore part of the measurement process.
-
-## Qualification
-
-Observed activity passes through qualification logic before being incorporated into reported evidence.
-
-The qualification process is intended to exclude or separate traffic that should not be interpreted as meaningful autonomous retrieval.
-
-Examples can include:
-
-- known diagnostic activity;
-- controlled testing;
-- traffic outside the defined measurement scope;
-- requests failing relevant retrieval criteria.
-
-The detailed production rules used by AI Observatory are proprietary to Sydney Business Web.
+Traffic that merely claims a recognised crawler identity but cannot be sufficiently corroborated is not promoted into public headline evidence.
 
 ## Autonomous Retrieval
 
-An important distinction within AI Observatory is between controlled testing and retrieval initiated independently by recognised external systems.
+AI Observatory distinguishes autonomous crawler behaviour from activity initiated by a human or site operator.
 
-This allows the system to preserve evidence of crawler behaviour without artificially creating the activity being measured.
+Owner-triggered diagnostics, controlled Observatory tests and user-requested AI retrieval may be retained as telemetry, but they do not enter the autonomous headline measurements.
 
-Where autonomous retrieval is reported, the intention is to identify activity initiated by the external crawler system rather than activity manufactured merely to increase retrieval counts.
+Examples of user-requested activity can include retrieval classes such as ChatGPT-User, Claude-User or Perplexity-User when the request represents a user-initiated fetch rather than independent crawler discovery.
+
+This separation prevents controlled or user-triggered activity from artificially increasing autonomous retrieval counts.
+
+## Current Business-Resource Qualification
+
+Under Measurement Contract 1.4, business retrieval is not inferred from whether an error response happens to look like HTML, nor from a broad content-type classification alone.
+
+A request can enter the business-retrieval score only when its path qualifies against the deployment's explicit registry of **current approved business resources**.
+
+The registry can include current public pages and documents that the monitored organisation has determined belong to the business-information surface being measured.
+
+Resources outside that registry — including stale URLs, legacy paths, support assets, internal paths and unrecognised resources — do not enter the business-retrieval score.
+
+This approach makes the denominator explicit and prevents obsolete or irrelevant requests from distorting the public retrieval-success rate.
+
+## Machine-Discovery Qualification
+
+Machine discovery is measured separately from business-information retrieval.
+
+A deployment maintains an explicit whitelist of current machine-facing discovery resources, such as the site's recognised robots, llms and sitemap entry points.
+
+Discovery outcomes are reported independently and do not alter the business-retrieval success percentage.
+
+This distinction answers two different questions:
+
+**Business retrieval:** Can the machine successfully fetch current business information?
+
+**Machine discovery:** Can the machine successfully fetch the resources intended to help it discover or navigate the site?
+
+## Retrieval Outcomes
+
+For a qualifying GET request under Measurement Contract 1.4:
+
+- **2xx** — successful retrieval;
+- **4xx or 5xx** — failed retrieval;
+- **3xx** — neutral redirect, retained as evidence but excluded from the success-rate denominator.
+
+A redirect is therefore not treated as a failed retrieval merely because the first response is not 2xx.
+
+The Observatory also does not infer from a redirect response alone that a crawler subsequently followed the redirect.
+
+## Business Retrieval Success Rate
+
+The public business retrieval success rate is calculated from qualifying current business-resource requests that produced a terminal success or failure outcome:
+
+**successful qualifying 2xx business retrievals ÷ qualifying 2xx, 4xx and 5xx business retrievals**
+
+3xx responses remain observable evidence but are not included in this denominator.
+
+If there are no scored attempts in the reporting window, the rate is reported as unavailable rather than as 0%.
 
 ## Evidence Aggregation
 
-Qualified retrieval events can be aggregated into reporting periods such as rolling summaries.
+Qualified retrieval events can be aggregated into reporting periods such as rolling 24-hour summaries.
 
 Aggregation can provide evidence including:
 
-- number of qualified retrievals;
-- systems responsible for retrieval;
-- business-content retrieval activity;
-- discovery activity;
-- successful versus unsuccessful retrieval;
+- number of qualifying autonomous machine systems observed;
+- successful business-information retrievals;
+- business retrieval success rate;
+- machine-discovery retrievals;
+- crawler-specific activity;
 - changes in retrieval behaviour over time.
+
+The reporting layer can cache a generated snapshot for a defined interval. Repeated requests within that interval can therefore legitimately return the same generated timestamp.
 
 The purpose is not to maximise a bot count.
 
@@ -158,6 +211,9 @@ https://sydneybusinessweb.com.au/ai-retrieval-evidence/
 Technical architecture:  
 https://github.com/Sydney-Business-Web/ai-observatory/blob/main/docs/architecture.md
 
+Measurement boundary:  
+https://github.com/Sydney-Business-Web/ai-observatory/blob/main/docs/measurement-boundary.md
+
 Sydney Business Web:  
 https://sydneybusinessweb.com.au/
 
@@ -165,6 +221,6 @@ https://sydneybusinessweb.com.au/
 
 **AI Observatory is proprietary technology developed by Sydney Business Web.**
 
-This document describes the public methodology and measurement principles. Production qualification rules and proprietary implementation logic are not distributed here.
+This document describes the public methodology and measurement principles. Production source code, private thresholds and proprietary implementation logic are not distributed here.
 
 © Sydney Business Web. All rights reserved.
