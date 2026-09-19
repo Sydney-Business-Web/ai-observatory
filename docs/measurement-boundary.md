@@ -4,30 +4,92 @@ AI Observatory is a retrieval-monitoring and evidence system developed by [Sydne
 
 This document defines the boundary between what AI Observatory can directly measure and what cannot legitimately be inferred from retrieval telemetry alone.
 
+## Current Measurement Contract
+
+The current public measurement contract is **1.4**, finalised on 20 September 2026.
+
+Contract 1.4 formalises the distinction between:
+
+- site attribution and site scoring;
+- autonomous crawler behaviour and user-requested or owner-triggered retrieval;
+- current business-resource retrieval and machine-discovery retrieval;
+- successful, failed and neutral redirect outcomes.
+
+These distinctions narrow the public evidence set deliberately.
+
 ## What AI Observatory Measures
 
 AI Observatory measures observable website retrieval activity that satisfies its defined qualification criteria.
 
-This can include evidence that a recognised AI or search crawler:
+This can include evidence that a sufficiently corroborated AI or search crawler:
 
-- requested a website resource;
+- requested a current approved business resource;
 - successfully or unsuccessfully retrieved that resource;
-- retrieved substantive business content;
-- performed discovery-related activity;
-- accessed particular classes of website resources;
+- requested an approved machine-discovery resource;
+- produced a 2xx, 3xx, 4xx or 5xx response outcome;
 - changed its retrieval behaviour over time.
 
-These are observable events occurring at the website or network edge.
+These are observable events occurring at the website edge or within another sufficiently attributable telemetry source.
 
 ## What Retrieval Evidence Establishes
 
 A qualified retrieval establishes a deliberately limited fact:
 
-> **A recognised external system accessed a particular web resource under the Observatory's measurement criteria.**
+> **A sufficiently corroborated external system accessed a qualifying web resource under the Observatory's measurement criteria.**
 
 This provides useful evidence for the retrieval layer of AI Visibility.
 
 It does not establish what subsequently occurred inside the external system.
+
+## Site Attribution Boundary
+
+A site-specific score is only meaningful when the underlying observation can first be attributed to the monitored site.
+
+The telemetry source can differ between deployments. Direct edge observation, domain-specific access logs or account-specific server-log provenance can all provide attribution if they meet the deployment's evidence requirements.
+
+The governing principle is:
+
+> **Site attribution precedes site scoring.**
+
+Where exact requested-host resolution is unavailable, AI Observatory does not automatically discard the observation if the telemetry source itself provides a defensible site-specific provenance.
+
+## Identity Boundary
+
+A crawler name in a User-Agent string is not, by itself, sufficient for headline evidence.
+
+The claimed identity must meet the Observatory's public corroboration threshold.
+
+Where the available evidence is insufficient, the observation can remain in private telemetry but is not promoted into the public autonomous measurements.
+
+## Autonomous Activity Boundary
+
+AI Observatory distinguishes autonomous crawler behaviour from activity initiated by a person or site operator.
+
+Owner-triggered diagnostics, Observatory tests and user-requested AI retrieval may be retained as evidence, but they do not enter the autonomous headline measurements.
+
+The purpose is to avoid presenting controlled or user-triggered retrieval as if it were independent crawler discovery.
+
+## Current Resource Boundary
+
+Business-retrieval scoring is restricted to an explicit registry of current approved business resources.
+
+A request for a stale URL, legacy path, support asset, internal path or otherwise unqualified resource does not enter the business-retrieval denominator merely because it returned HTML or another content type.
+
+Machine-discovery resources are maintained separately through an explicit discovery whitelist.
+
+This means the public score describes retrieval of the **current qualified resource surface**, not every historical or guessed URL a crawler might request.
+
+## Response Outcome Boundary
+
+For a qualifying GET request:
+
+- **2xx** is counted as a successful retrieval;
+- **4xx or 5xx** is counted as a failed retrieval;
+- **3xx** is retained as evidence but treated as neutral and excluded from the success-rate denominator.
+
+A redirect response therefore does not count as a failure.
+
+AI Observatory also does not infer that a crawler followed a redirect unless a later request is independently observed.
 
 ## What AI Observatory Does Not Claim
 
@@ -137,6 +199,6 @@ https://sydneybusinessweb.com.au/
 
 **AI Observatory is proprietary technology developed by Sydney Business Web.**
 
-This document defines the public measurement boundary. Production qualification logic and proprietary implementation details are not distributed here.
+This document defines the public measurement boundary. Production source code, private thresholds and proprietary implementation details are not distributed here.
 
 © Sydney Business Web. All rights reserved.
